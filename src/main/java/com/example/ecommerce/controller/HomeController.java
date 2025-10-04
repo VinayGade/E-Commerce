@@ -23,12 +23,12 @@ public class HomeController {
         return "ProductPage";
     }
 
-    @GetMapping("/home")
+    @GetMapping({"/", "/home"})
     public String homePage(){
-        return "homePage";
+        return "HomePage";
     }
 
-    @GetMapping("/contact")
+    @GetMapping("/contactUs")
     public String contactPage(){
         return "contactPage";
     }

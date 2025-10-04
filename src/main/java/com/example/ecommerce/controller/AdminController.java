@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-
-@Controller("/admin")
+@Controller
 public class AdminController {
 
     @Autowired
@@ -32,9 +31,7 @@ public class AdminController {
     @Autowired
     private ProductService productService;
 
-    private User user;
-
-    @GetMapping("/verify-credentials")
+    @GetMapping("/admin/verify-credentials")
     public String verifyCredentials(@ModelAttribute Admin admin, Model model){
         if(adminService.verifyCredentials(admin.getEmail(), admin.getPassword())){
             return "/admin/home";
@@ -43,7 +40,7 @@ public class AdminController {
         return "Login";
     }
 
-    @GetMapping("/home")
+    @GetMapping("/admin/home")
     public String adminHomePage(Model model){
 
         List<Admin> admins = adminService.getAll();
@@ -59,31 +56,30 @@ public class AdminController {
         return "AdminHomePage";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/add/admin")
     public String createAdmin(){
         return "CreateAdmin";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/add/admin")
     public String createAdmin(Admin admin){
         adminService.createUser(admin);
         return "/admin/home";
     }
 
-    @GetMapping("/update/{id}")
+    @GetMapping("/update/admin/{id}")
     public String updateAdmin(@PathVariable Long id, Model model){
         model.addAttribute("admin", adminService.getAdminById(id));
         return "updateAdmin";
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update/admin")
     public String updateAdmin(Admin admin){
         adminService.updateAdmin(admin);
         return "/admin/home";
     }
 
-
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/admin/{id}")
     public String deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
         return "/admin/home";
@@ -95,7 +91,7 @@ public class AdminController {
         String email = user.getEmail();
 
         if(userService.verifyCredentials(email, user.getPassword())){
-            this.user = userService.findUserByEmail(email);
+            user = userService.findUserByEmail(email);
             List<Order> orders = orderService.findOrdersByUser(user);
             return "product-page";
         }
@@ -108,7 +104,10 @@ public class AdminController {
     public String placeOrder(Order order, Model model){
         double totalAmount = order.getPrice() * order.getQuantity();
         order.setAmount(totalAmount);
+        /*
+        User user = userService.getUserById(userId);
         order.setUser(user);
+         */
         order.setDate(new Date());
         orderService.createOrder(order);
         model.addAttribute("amount", totalAmount);
@@ -118,7 +117,7 @@ public class AdminController {
     @PostMapping("/product/search")
     public String productSearch(String name, Long userId, Model model) {
         Product product = productService.findProductByName(name);
-        //User user = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
 
         if (product != null) {
             model.addAttribute("ordersList", orderService.findOrdersByUser(user));
@@ -129,5 +128,4 @@ public class AdminController {
         model.addAttribute("orderList", orderService.findOrdersByUser(user));
         return "ProductPage";
     }
-
 }
