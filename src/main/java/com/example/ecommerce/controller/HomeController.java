@@ -1,6 +1,7 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.entities.Admin;
+import com.example.ecommerce.entities.Message;
 import com.example.ecommerce.entities.Product;
 import com.example.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class HomeController {
     public String productsPage(Model model){
         List<Product> products = productService.getAll();
         model.addAttribute("productList", products);
-        return "ProductPage";
+        return "Products";
     }
 
     @GetMapping({"/", "/home"})
@@ -29,13 +30,14 @@ public class HomeController {
     }
 
     @GetMapping("/contactUs")
-    public String contactPage(){
-        return "contactPage";
+    public String contactPage(Model model){
+        model.addAttribute("message", new Message());
+        return "contactUs";
     }
 
     @GetMapping("/aboutUs")
     public String aboutUs(){
-        return "aboutUs";
+        return "AboutUs";
     }
 
     @GetMapping("/login")

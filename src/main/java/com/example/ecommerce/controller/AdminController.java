@@ -31,10 +31,11 @@ public class AdminController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/admin/verify-credentials")
+    //@GetMapping("/admin/verify/credentials")
+    @GetMapping("/verifycredentials")
     public String verifyCredentials(@ModelAttribute Admin admin, Model model){
         if(adminService.verifyCredentials(admin.getEmail(), admin.getPassword())){
-            return "/admin/home";
+            return "redirect:/admin/home";
         }
         model.addAttribute("error", "Invalid email or password...");
         return "Login";
@@ -64,7 +65,7 @@ public class AdminController {
     @PostMapping("/add/admin")
     public String createAdmin(Admin admin){
         adminService.createUser(admin);
-        return "/admin/home";
+        return "redirect:/admin/home";
     }
 
     @GetMapping("/update/admin/{id}")
@@ -76,13 +77,13 @@ public class AdminController {
     @PostMapping("/update/admin")
     public String updateAdmin(Admin admin){
         adminService.updateAdmin(admin);
-        return "/admin/home";
+        return "redirect:/admin/home";
     }
 
     @DeleteMapping("/delete/admin/{id}")
     public String deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
-        return "/admin/home";
+        return "redirect:/admin/home";
     }
 
     @PostMapping("/user/login")
@@ -93,6 +94,7 @@ public class AdminController {
         if(userService.verifyCredentials(email, user.getPassword())){
             user = userService.findUserByEmail(email);
             List<Order> orders = orderService.findOrdersByUser(user);
+            model.addAttribute("orderList", orders);
             return "product-page";
         }
 

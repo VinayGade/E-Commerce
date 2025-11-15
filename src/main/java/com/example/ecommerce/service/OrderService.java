@@ -12,31 +12,31 @@ import java.util.List;
 public class OrderService {
 
     @Autowired
-    private OrderRepository orderRepo;
+    private OrderRepository orderRepository;
 
     public List<Order> getAll() {
-        return orderRepo.findAll();
+        return orderRepository.findAll();
     }
 
     public Order getOrderById(Long id) {
-        return orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order with id " + id + " not found"));
+        return orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order with id " + id + " not found"));
     }
 
     public void createOrder(Order Order) {
-        orderRepo.save(Order);
+        orderRepository.save(Order);
     }
 
     public void updateOrder(Order Order) {
-        orderRepo.findById(Order.getId()).orElseThrow(() -> new RuntimeException("Order with id " + Order.getId() + " not found"));
-        orderRepo.save(Order);
+        orderRepository.findById(Order.getId()).orElseThrow(() -> new RuntimeException("Order with id " + Order.getId() + " not found"));
+        orderRepository.save(Order);
     }
 
     public void deleteOrder(Long id) {
-        orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order with id " + id + " not found"));
-        orderRepo.deleteById(id);
+        orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order with id " + id + " not found"));
+        orderRepository.deleteById(id);
     }
 
     public List<Order> findOrdersByUser(User user) {
-        return orderRepo.findByUser(user);
+        return orderRepository.findByUser(user);
     }
 }

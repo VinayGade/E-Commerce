@@ -16,30 +16,30 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/add")
+    @GetMapping("/add/user")
     public String addUser(){
         return "AddUser";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/add/user")
     public String addUser(User user){
         userService.createUser(user);
         return "Login";
     }
 
-    @GetMapping("/update/{id}")
+    @GetMapping("/update/user/{id}")
     public String updateUser(@PathVariable Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         return "UpdateUser";
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update/user")
     public String updateUser(User user) {
         userService.createUser(user);
         return "/admin/home";
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/user/{id}")
     public String deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
         return "/admin/home";
