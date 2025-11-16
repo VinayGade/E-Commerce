@@ -32,13 +32,16 @@ public class AdminController {
     private ProductService productService;
 
     //@GetMapping("/admin/verify/credentials")
-    @GetMapping("/verifycredentials")
+    @GetMapping("/admin/verify/credentials")
     public String verifyCredentials(@ModelAttribute Admin admin, Model model){
         if(adminService.verifyCredentials(admin.getEmail(), admin.getPassword())){
+            model.addAttribute("admin", new Admin());
+            model.addAttribute("user", new User());
+            model.addAttribute("product", new Product());
             return "redirect:/admin/home";
         }
         model.addAttribute("error", "Invalid email or password...");
-        return "Login";
+        return "LoginPage";
     }
 
     @GetMapping("/admin/home")
@@ -57,11 +60,6 @@ public class AdminController {
         return "AdminHomePage";
     }
 
-    @GetMapping("/add/admin")
-    public String createAdmin(){
-        return "CreateAdmin";
-    }
-
     @PostMapping("/add/admin")
     public String createAdmin(Admin admin){
         adminService.createUser(admin);
@@ -69,16 +67,18 @@ public class AdminController {
     }
 
     @GetMapping("/update/admin/{id}")
-    public String updateAdmin(@PathVariable Long id, Model model){
+    public String update(@PathVariable("id") Long id, Model model)
+    {
         model.addAttribute("admin", adminService.getAdminById(id));
-        return "updateAdmin";
+        return "UpdateAdmin";
     }
 
     @PostMapping("/update/admin")
-    public String updateAdmin(Admin admin){
+    public String updateAdmin(Admin admin) {
         adminService.updateAdmin(admin);
         return "redirect:/admin/home";
     }
+
 
     @DeleteMapping("/delete/admin/{id}")
     public String deleteAdmin(@PathVariable Long id){
@@ -95,11 +95,11 @@ public class AdminController {
             user = userService.findUserByEmail(email);
             List<Order> orders = orderService.findOrdersByUser(user);
             model.addAttribute("orderList", orders);
-            return "product-page";
+            return "Products";
         }
 
         model.addAttribute("error", "Invalid email or passowrd...");
-        return "Login";
+        return "LoginPage";
     }
 
     @GetMapping("/place/order")

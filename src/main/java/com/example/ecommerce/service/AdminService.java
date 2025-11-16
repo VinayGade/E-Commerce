@@ -38,9 +38,6 @@ public class AdminService {
     public boolean verifyCredentials(String email, String password){
 
         Admin admin = adminRepository.findByEmail(email);
-        if(admin.getPassword() == password){
-            return true;
-        }
-        return false;
+        return admin.getPassword().equals(password);
     }
 }

@@ -16,15 +16,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/add/user")
-    public String addUser(){
-        return "AddUser";
-    }
-
     @PostMapping("/add/user")
     public String addUser(User user){
         userService.createUser(user);
-        return "Login";
+        return "LoginPage";
     }
 
     @GetMapping("/update/user/{id}")

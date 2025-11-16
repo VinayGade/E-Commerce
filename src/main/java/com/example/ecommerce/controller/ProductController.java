@@ -20,12 +20,7 @@ public class ProductController {
     @PostMapping("/add/product")
     public String addProduct(Product product){
         productService.createProduct(product);
-        return "/admin/home";
-    }
-
-    @GetMapping("/add/product")
-    public String addProduct(){
-        return "AddProduct";
+        return "redirect:/admin/home";
     }
 
     @PostMapping("/update/product")
