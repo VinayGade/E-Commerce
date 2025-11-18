@@ -26,18 +26,18 @@ public class ProductController {
     @PostMapping("/update/product")
     public String updateProduct(Product product){
         productService.updateProduct(product);
-        return "/admin/home";
+        return "redirect:/admin/home";
     }
 
     @GetMapping("/update/product/{id}")
     public String updateProduct(@PathVariable Long id, Model model){
         model.addAttribute("product", productService.getProductById(id));
-        return "updateProduct";
+        return "UpdateProduct";
     }
 
-    @DeleteMapping("/delete/product/{id}")
+    @GetMapping("/delete/product/{id}")
     public String deleteProduct(@PathVariable Long id){
         productService.deleteProduct(id);
-        return "/admin/home";
+        return "redirect:/admin/home";
     }
 }

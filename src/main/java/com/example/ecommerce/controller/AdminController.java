@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Date;
 import java.util.List;
@@ -79,55 +80,74 @@ public class AdminController {
         return "redirect:/admin/home";
     }
 
-
-    @DeleteMapping("/delete/admin/{id}")
+    @GetMapping("/delete/admin/{id}")
     public String deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
         return "redirect:/admin/home";
     }
 
-    @PostMapping("/user/login")
-    public String userLogin(User user, Model model){
-
-        String email = user.getEmail();
-
-        if(userService.verifyCredentials(email, user.getPassword())){
-            user = userService.findUserByEmail(email);
-            List<Order> orders = orderService.findOrdersByUser(user);
-            model.addAttribute("orderList", orders);
-            return "Products";
+    @GetMapping("/user/home")
+    public String userHome(@ModelAttribute("userId") Long userId,
+                           @ModelAttribute("error") String error, @ModelAttribute("messageSuccess") String messageSuccess,
+                           Model model) {
+        User user = userService.getUserById(userId);
+        model.addAttribute("ordersList", orderService.findOrdersByUser(user));
+        if (!error.isEmpty()) {
+            model.addAttribute("error", error);
+        }
+        if (!messageSuccess.isEmpty()) {
+            model.addAttribute("messageSuccess", messageSuccess);
         }
 
-        model.addAttribute("error", "Invalid email or passowrd...");
+        return "BuyProductPage";
+    }
+
+    @PostMapping("/user/login")
+    public String userLogin(User user, RedirectAttributes redirectAttributes) {
+        if (userService.verifyCredentials(user.getEmail(), user.getPassword())) {
+            user = userService.findUserByEmail(user.getEmail());
+            redirectAttributes.addAttribute("userId", user.getId());
+
+            //return "BuyProductPage";
+            return "redirect:/user/home";
+        }
+
+        redirectAttributes.addAttribute("error", "Invalid email or password");
         return "LoginPage";
     }
 
-    @GetMapping("/place/order")
-    public String placeOrder(Order order, Model model){
+    @PostMapping("/place/order")
+    public String placeOrder(Order order, Long userId, RedirectAttributes redirectAttributes) {
         double totalAmount = order.getPrice() * order.getQuantity();
         order.setAmount(totalAmount);
-        /*
+        order.setDate(new Date());
+
         User user = userService.getUserById(userId);
         order.setUser(user);
-         */
-        order.setDate(new Date());
+
         orderService.createOrder(order);
-        model.addAttribute("amount", totalAmount);
-        return "OrderStatus";
+
+        redirectAttributes.addAttribute("userId", userId);
+        redirectAttributes.addAttribute("messageSuccess", "The order has been placed!!");
+
+        //return "BuyProductPage";
+        return "redirect:/user/home";
     }
 
     @PostMapping("/product/search")
     public String productSearch(String name, Long userId, Model model) {
         Product product = productService.findProductByName(name);
         User user = userService.getUserById(userId);
+        model.addAttribute("ordersList", orderService.findOrdersByUser(user));
 
         if (product != null) {
-            model.addAttribute("ordersList", orderService.findOrdersByUser(user));
             model.addAttribute("product", product);
-            return "ProductPage";
+        } else {
+            model.addAttribute("messageError", "Sorry, product was not found...");
         }
-        model.addAttribute("Error", "Sorry, product was not found...");
-        model.addAttribute("orderList", orderService.findOrdersByUser(user));
-        return "ProductPage";
+
+        model.addAttribute("userId", userId);
+
+        return "BuyProductPage";
     }
 }

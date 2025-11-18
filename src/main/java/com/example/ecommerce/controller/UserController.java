@@ -31,12 +31,12 @@ public class UserController {
     @PostMapping("/update/user")
     public String updateUser(User user) {
         userService.createUser(user);
-        return "/admin/home";
+        return "redirect:/admin/home";
     }
 
-    @DeleteMapping("/delete/user/{id}")
+    @GetMapping("/delete/user/{id}")
     public String deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
-        return "/admin/home";
+        return "redirect:/admin/home";
     }
 }
